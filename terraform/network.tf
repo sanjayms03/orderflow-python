@@ -1,0 +1,41 @@
+resource "aws_vpc" "main" { cidr_block = "10.40.0.0/16"
+  tags = { Project = "orderflow", Owner = "skyforge-test-fixture" } }
+resource "aws_subnet" "a" { vpc_id = aws_vpc.main.id
+  cidr_block = "10.40.1.0/24"
+  availability_zone = "us-east-1a" }
+resource "aws_subnet" "b" { vpc_id = aws_vpc.main.id
+  cidr_block = "10.40.2.0/24"
+  availability_zone = "us-east-1b" }
+resource "aws_subnet" "c" { vpc_id = aws_vpc.main.id
+  cidr_block = "10.40.3.0/24"
+  availability_zone = "us-east-1c" }
+resource "aws_internet_gateway" "main" { vpc_id = aws_vpc.main.id }
+resource "aws_eip" "nat_a" { domain = "vpc" }
+resource "aws_eip" "nat_b" { domain = "vpc" }
+resource "aws_eip" "nat_c" { domain = "vpc" }
+resource "aws_nat_gateway" "a" { allocation_id = aws_eip.nat_a.id
+  subnet_id = aws_subnet.a.id }
+resource "aws_nat_gateway" "b" { allocation_id = aws_eip.nat_b.id
+  subnet_id = aws_subnet.b.id }
+resource "aws_nat_gateway" "c" { allocation_id = aws_eip.nat_c.id
+  subnet_id = aws_subnet.c.id }
+resource "aws_security_group" "open" {
+  name = "orderflow-open-sg"
+  vpc_id = aws_vpc.main.id
+  ingress { from_port = 0
+  to_port = 65535
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"] }
+  ingress { from_port = 22
+  to_port = 22
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"] }
+  ingress { from_port = 5432
+  to_port = 5432
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"] }
+  egress { from_port = 0
+  to_port = 0
+  protocol = "-1"
+  cidr_blocks = ["0.0.0.0/0"] }
+}

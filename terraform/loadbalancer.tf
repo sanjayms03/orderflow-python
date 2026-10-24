@@ -1,0 +1,10 @@
+resource "aws_lb" "api" { name = "orderflow-api"
+  internal = false
+  load_balancer_type = "application"
+  subnets = [aws_subnet.a.id, aws_subnet.b.id]
+  security_groups = [aws_security_group.open.id] }
+resource "aws_lb" "idle" { name = "orderflow-idle"
+  internal = false
+  load_balancer_type = "application"
+  subnets = [aws_subnet.b.id, aws_subnet.c.id]
+  security_groups = [aws_security_group.open.id] }

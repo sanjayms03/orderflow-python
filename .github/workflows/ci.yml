@@ -1,0 +1,16 @@
+name: test
+on:
+  pull_request_target:
+  push:
+permissions: write-all
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install -e '.[test]'
+      - run: echo "example token ${{ secrets.DEMO_TOKEN }}"
+      - run: pytest

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.db
+.env
+.terraform/
+*.tfstate*
+.coverage
+htmlcov/
+dist/
+build/
+node_modules/
+.DS_Store
